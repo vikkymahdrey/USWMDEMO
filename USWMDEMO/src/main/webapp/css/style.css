@@ -1,0 +1,23 @@
+
+a {
+	color: #0080c0;
+}
+
+a:hover {
+	color: blue;
+}
+
+a:focus {
+	outline: none;
+}
+
+
+div.failure {
+	color: red;
+}
+
+ 
+
+div.success {
+	color: green;
+}

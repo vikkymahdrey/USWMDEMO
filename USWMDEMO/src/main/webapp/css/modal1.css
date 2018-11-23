@@ -1,0 +1,24 @@
+* {
+    -webkit-tap-highlight-color: transparent;
+    outline: 0;
+    
+} 
+
+.fieldset {
+  border: 1px solid #ccccff; 
+  padding:0 1em;
+  /* margin-left: 50px; */ 
+margin: 0.5em 120px !important;
+  
+}
+.legend {
+    border-style: none;
+    border-width: 0;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 0;
+    width: auto;
+    font-weight: bold !important;
+    padding: 0 10px;
+    
+}

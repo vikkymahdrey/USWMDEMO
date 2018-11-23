@@ -1,0 +1,12 @@
+package com.team.app.dao;
+
+
+import java.io.Serializable;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.team.app.domain.ActionsAudit;
+
+public interface UserAuditDao extends JpaRepository<ActionsAudit, Serializable> {
+
+}
