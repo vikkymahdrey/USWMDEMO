@@ -25,7 +25,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-<title>Water Meter Frames</title>
+<title>Water Meter Consoildated Frames</title>
 
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/custom_siemens.css" rel="stylesheet">
@@ -78,23 +78,21 @@
 					
 						
 						<div class="box-header with-border">
-  					  			<h5 class="text-blue text-left "><span class="fa fa-files-o"></span><b>Frames</b></h5>
+  					  			<h5 class="text-blue text-left "><span class="fa fa-files-o"></span><b>Consoildated Frames</b></h5>
        					</div><!-- /.box-header -->
 						
 						<div class="row" style="overflow-y: auto;">
 							<div class="col-sm-12 ">	
 							<display:table  class="table table-hover  text-center"  name="<%=frames%>" id="row"
 									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="100">
-							<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
-							<display:column  property="applicationID" title="ApplicationID" sortable="true"  />
-							<display:column  property="applicationName" title="ApplicationName" sortable="true"  />
+							<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />							
+							<display:column  property="applicationId" title="ApplicationID" sortable="true"  />
 							<display:column  property="nodeName" title="WaterMeterName" sortable="true"  />
 							<display:column  property="devEUI" title="WaterMeter" sortable="true"  />
-							<display:column  property="devMapId" title="DevID" sortable="true"  />
-							<display:column  property="gatewayMac" title="GatewayMac" sortable="true"  />
-							<display:column  property="gatewayName" title="GatewayName" sortable="true"  />
-							<display:column  property="waterltr" title="Water_Ltr"  sortable="true"  />
-							<display:column  property="createdAt" title="CreatedDt"  sortable="true" format="{0,date,yyyy-MM-dd HH:mm:ss}" /> 
+							<display:column  property="status" title="Status" sortable="true"  />
+							<display:column  property="waterltr" title="Water_liters"  sortable="true"  />
+							<display:column  property="fId" title="frame_ref" sortable="true"  />							
+							<display:column  property="createdDt" title="createdDt"  sortable="true" format="{0,date,yyyy-MM-dd HH:mm:ss}" /> 
                             <%-- <display:column   title="CreatedDt" >
 								 <fmt:timeZone value="${timeZone}">	    								
 	          									<fmt:formatDate value="${createdAt}" timeZone="${timeZone}" type="both" />	        							

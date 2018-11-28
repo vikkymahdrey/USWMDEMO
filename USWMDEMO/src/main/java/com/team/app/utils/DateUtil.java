@@ -64,6 +64,20 @@ public class DateUtil {
 		    return date;
 		  }
 		
+		public static Date getCurrentDateTimeIST() {
+			Date date= null;
+		    try {
+		    	TimeZone.setDefault(TimeZone.getTimeZone("IST"));
+		  	  	DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		  	  	formatter.setTimeZone(TimeZone.getTimeZone("IST")); // Or whatever IST is supposed to be
+		    	date=formatter.parse(formatter.format(new Date(System.currentTimeMillis())));
+		    	
+			} catch (Exception e) {
+				logger.error("error in  convertStringToTimestamp",e);
+			}
+		    return date;
+		  }
+		
 		public static String changeDateFromat(Date sqlFormat) {
 			// System.out.println("Got Here");
 			try {

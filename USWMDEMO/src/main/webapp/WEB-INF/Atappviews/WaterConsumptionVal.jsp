@@ -94,6 +94,8 @@
 	 	   var orgDesc=document.getElementById("orgN").value;
 		  	var appDesc=document.getElementById("appN").value;
 		  	var devDesc=document.getElementById("devN").value;
+		   var fromDate = new Date($('#fromDate').val());
+		 	  var toDate = new Date($('#toDate').val());
 	 	  		   	   
 		   if(orgid=="0"){
 			   alert(orgDesc);
@@ -115,6 +117,9 @@
 		   }else if ($("input[name=toDate]").val() == "") {
 				alert("Choose ToDate");
 				document.getElementById("toDate").focus();
+				return false;
+		   }else if (fromDate > toDate) {
+			  	 alert("Invalid Date Range"); 
 				return false;
 		   }
 	   }

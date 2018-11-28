@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.team.app.domain.LoraFrame;
+import com.team.app.domain.TblLoraConsoildatedPkt;
 import com.team.app.domain.TblUserInfo;
 import com.team.app.exception.AtAppException;
 
@@ -31,6 +32,8 @@ public interface ConsumerInstrumentService {
 	public Object[] getUserDashboardGraphsOnLoad(String appId, String devEUI, Date currDate)throws Exception;
 	public Object[] getUserDashboardGraphOnSubmit(String devId, Date fromDate, Date toDate, String type)throws Exception;
 	public Long getWaterConsumptionsUnitForEndUser(String appId, String devEUI)throws Exception;
+	public List<TblLoraConsoildatedPkt> getConsoildatedFrames()throws Exception;
+	public Long getWaterConsumptionsUnitFromDates(String devNode, Date fromDate, Date toDate)throws Exception;
 	
 	
 	

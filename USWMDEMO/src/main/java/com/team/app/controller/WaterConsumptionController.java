@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.team.app.constant.AppConstants;
 import com.team.app.domain.LoraFrame;
 import com.team.app.domain.TblKeywordType;
+import com.team.app.domain.TblLoraConsoildatedPkt;
 import com.team.app.domain.TblUserInfo;
 import com.team.app.domain.UserDeviceMapping;
 import com.team.app.logger.AtLogger;
@@ -91,11 +92,36 @@ public class WaterConsumptionController {
 			 }
 			 
 		     List<LoraFrame> frm=(List<LoraFrame>) request.getAttribute("frames");
+		     request.getAttribute("frames");
 		     
 		     if(frm!=null && !frm.isEmpty()){
 			   map.put("frames", frm);
 		     }	
+		     
+		      map.put("totalConsumptions", (Long)request.getAttribute("totalConsumptions"));
 		     return "EndUserWaterConsumption";
+		  }catch(Exception e){
+			  	e.printStackTrace();
+				HttpSession s=request.getSession();
+			    s.setAttribute("statusLog",AppConstants.statusLog);
+				s.setAttribute("url", request.getRequestURL());
+				s.setAttribute("exception", e.toString());				
+				s.setAttribute("className",Thread.currentThread().getStackTrace()[1].getClassName());
+				s.setAttribute("methodName",Thread.currentThread().getStackTrace()[1].getMethodName());
+				s.setAttribute("lineNumber",Thread.currentThread().getStackTrace()[1].getLineNumber());		       
+			    return "redirect:/exception";
+		    }
+		
+	 }
+	
+	
+	@RequestMapping(value= {"/consoildatedFrames"}, method={ RequestMethod.GET, RequestMethod.POST })
+    public String consoildatedFramesHandler(HttpSession session,HttpServletRequest request,Map<String,Object> map) {
+		  try{
+		     			 
+		     List<TblLoraConsoildatedPkt> frames=consumerInstrumentServiceImpl.getConsoildatedFrames();	    
+			    map.put("frames", frames);		   
+			   		return "consoildatedPkt";
 		  }catch(Exception e){
 			  	e.printStackTrace();
 				HttpSession s=request.getSession();
@@ -414,7 +440,7 @@ public class WaterConsumptionController {
 	 }
 	
 	
-	@RequestMapping(value= {"/endUserWaterConsumptionUnits"}, method=RequestMethod.POST)
+	@RequestMapping(value= {"/endUserWaterConsumptionUnits"}, method={ RequestMethod.GET, RequestMethod.POST })
     public String endUserWaterConsumptionUnitsHandler(HttpServletRequest request, Map<String,Object> map,RedirectAttributes redirectAttributes) {
 	  try{
 		String devNode=request.getParameter("devid");
@@ -437,6 +463,11 @@ public class WaterConsumptionController {
 	            	request.setAttribute("frames",frames);
 	        	      	//redirectAttributes.addAllAttributes(request.getParameterMap());
 	        }
+	        
+	        Long totalConsumptions=consumerInstrumentServiceImpl.getWaterConsumptionsUnitFromDates(devNode,fromDate,toDate);	        
+	        	logger.debug("waterConsumption value as ",totalConsumptions);	
+	        request.setAttribute("totalConsumptions",totalConsumptions);
+	        	
 	        return "forward:/endUserWaterConsumption";
 		
 		}catch(Exception e){

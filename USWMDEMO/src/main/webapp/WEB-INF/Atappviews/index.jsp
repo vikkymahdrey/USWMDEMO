@@ -46,6 +46,14 @@
 	</script>
 	
 	<script  type="text/javascript">
+	function reload(){		
+		var passvalid= document.getElementById("sts").value;		
+		if(passvalid=="" || passvalid=="null"){
+			return true;
+		}else{
+			window.location.reload();
+		}		
+	}
 	
 	 function loadScript(){	
 	
@@ -83,10 +91,12 @@ function browserIdentity()
 	});  
 
 function validate() {
+	
 	var uname = document.getElementById("uname").value;
 	var password = document.getElementById("pass").value;
-	document.getElementById("namevalid").innerHTML = "";
-	document.getElementById("passvalid").innerHTML = "";
+	//document.getElementById("namevalid").innerHTML = "";
+	//document.getElementById("passvalid").innerHTML = "";
+	
 	
 	
 	 if (uname.length < 1) {
@@ -155,13 +165,13 @@ function validate() {
     <form action="onSubmitlogin" name="user_validation_form" id="user_validation_form" method="post" onsubmit="return validate()">
     
 			      <div class="form-group has-feedback">
-			      	<input type="text" name="uname" id="uname" class="form-control" placeholder="Username"/>
+			      	<input type="text" name="uname" id="uname" class="form-control" placeholder="Username" onclick="reload()"/>
 			      	<span class="fa fa-user form-control-feedback"></span>
 			        <span id="namevalid" style="color: red;"></span>
 			      </div>
 			      
 			      <div class="form-group has-feedback">
-			        <input type="password" name="pass" id="pass" class="form-control" placeholder="Password">
+			        <input type="password" name="pass" id="pass" class="form-control" placeholder="Password" onclick="reload()" />
 			        <span class="fa fa-lock form-control-feedback"></span>
 			        
 			        <span id="passvalid" style="color: red;" ><%=message %></span>

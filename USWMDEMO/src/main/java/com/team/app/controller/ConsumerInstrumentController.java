@@ -579,7 +579,7 @@ public class ConsumerInstrumentController {
 					payment.setNameOnCard(String.valueOf(obj.get("nameOnCard")));
 					payment.setPaymentId(String.valueOf(obj.get("paymentId")));
 					payment.setCreatedOn(crdtOn);
-					payment.setUpdateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));					
+					payment.setUpdateddt(DateUtil.getCurrentDateTimeIST());					
 					
 					TblPaymentInfo paymentUpdated=paymentBillService.updatePaymentInfo(payment);
 					if(paymentUpdated!=null){
@@ -642,8 +642,8 @@ public class ConsumerInstrumentController {
 							f.setTicketId("SWC"+ticketId);
 							f.setTblUserInfo(userInfo);
 							f.setStatus(AppConstants.open);
-							f.setCreatedAt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
-							f.setUpdatedAt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));							
+							f.setCreatedAt(DateUtil.getCurrentDateTimeIST());
+							f.setUpdatedAt(DateUtil.getCurrentDateTimeIST());							
 							
 							TblDeviceFeedback feedback=deviceInfo.setDeviceFeedback(f);
 							if(feedback!=null){

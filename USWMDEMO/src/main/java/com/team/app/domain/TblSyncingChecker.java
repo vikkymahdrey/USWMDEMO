@@ -6,48 +6,26 @@ import java.util.Date;
 
 
 /**
- * The persistent class for the tbl_lora_consoildated_pkt database table.
+ * The persistent class for the tbl_syncing_checker database table.
  * 
  */
 @Entity
-@Table(name="tbl_lora_consoildated_pkt")
-@NamedQuery(name="TblLoraConsoildatedPkt.findAll", query="SELECT t FROM TblLoraConsoildatedPkt t")
-public class TblLoraConsoildatedPkt implements Serializable {
+@Table(name="tbl_syncing_checker")
+@NamedQuery(name="TblSyncingChecker.findAll", query="SELECT t FROM TblSyncingChecker t")
+public class TblSyncingChecker implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private String id;
 
-	private String applicationId;
+	private String appId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="created_dt")
 	private Date createdDt;
 
 	private String devEUI;
-	
-	private String fId;
-	
-	private String devMapId;
-
-	public String getDevMapId() {
-		return devMapId;
-	}
-
-	public void setDevMapId(String devMapId) {
-		this.devMapId = devMapId;
-	}
-
-	public String getfId() {
-		return fId;
-	}
-
-	public void setfId(String fId) {
-		this.fId = fId;
-	}
-
-	private String nodeName;
 
 	private String status;
 
@@ -55,9 +33,7 @@ public class TblLoraConsoildatedPkt implements Serializable {
 	@Column(name="updated_dt")
 	private Date updatedDt;
 
-	private String waterltr;
-
-	public TblLoraConsoildatedPkt() {
+	public TblSyncingChecker() {
 	}
 
 	public String getId() {
@@ -68,12 +44,12 @@ public class TblLoraConsoildatedPkt implements Serializable {
 		this.id = id;
 	}
 
-	public String getApplicationId() {
-		return this.applicationId;
+	public String getAppId() {
+		return this.appId;
 	}
 
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
+	public void setAppId(String appId) {
+		this.appId = appId;
 	}
 
 	public Date getCreatedDt() {
@@ -92,14 +68,6 @@ public class TblLoraConsoildatedPkt implements Serializable {
 		this.devEUI = devEUI;
 	}
 
-	public String getNodeName() {
-		return this.nodeName;
-	}
-
-	public void setNodeName(String nodeName) {
-		this.nodeName = nodeName;
-	}
-
 	public String getStatus() {
 		return this.status;
 	}
@@ -114,14 +82,6 @@ public class TblLoraConsoildatedPkt implements Serializable {
 
 	public void setUpdatedDt(Date updatedDt) {
 		this.updatedDt = updatedDt;
-	}
-
-	public String getWaterltr() {
-		return this.waterltr;
-	}
-
-	public void setWaterltr(String waterltr) {
-		this.waterltr = waterltr;
 	}
 
 }

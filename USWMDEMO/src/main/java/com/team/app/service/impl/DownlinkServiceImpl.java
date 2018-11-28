@@ -476,7 +476,7 @@ public class DownlinkServiceImpl implements DownlinkService {
 													//DownlinkQueue d=downlinkQueueDao.getDownlinkQueueByAppIdDevEUIAndDeviceId(applicationID, devEUI, deviceId);
 														 DownlinkQueue d=downlinkQueueDao.getDownlinkQueueById(jsObj.get("id").toString());
 													 if(d!=null){
-														 d.setUpdatedAt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+														 d.setUpdatedAt(DateUtil.getCurrentDateTimeIST());
 														 	downlinkQueueDao.save(d);
 													 }else{
 														 DownlinkQueue downlinkQ=null;
@@ -490,8 +490,8 @@ public class DownlinkServiceImpl implements DownlinkService {
 														 	downlinkQ.setMpdu(mpdu);
 														 	downlinkQ.setPdu(pdu);
 														 	downlinkQ.setData(jsObj.get("data").toString());
-														 	downlinkQ.setCreatedAt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
-														 	downlinkQ.setUpdatedAt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+														 	downlinkQ.setCreatedAt(DateUtil.getCurrentDateTimeIST());
+														 	downlinkQ.setUpdatedAt(DateUtil.getCurrentDateTimeIST());
 														 	downlinkQueueDao.save(downlinkQ);
 														 
 													 }
@@ -503,7 +503,7 @@ public class DownlinkServiceImpl implements DownlinkService {
 													 if(d!=null){
 														 logger.debug("updating downlink information");														 
 														 d.setFlag("1");
-														 	d.setUpdatedAt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+														 	d.setUpdatedAt(DateUtil.getCurrentDateTimeIST());
 														 		downlinkQueueDao.save(d);
 													 }
 													 

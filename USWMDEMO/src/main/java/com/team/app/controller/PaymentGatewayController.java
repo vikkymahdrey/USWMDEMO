@@ -38,20 +38,20 @@ public class PaymentGatewayController {
 		
 	@RequestMapping(value= {"/payUBills"}, method={RequestMethod.GET,RequestMethod.POST})
 	public String payUBillsHandler(HttpServletRequest request, HttpSession session, Map<String, Object> map){
-		logger.debug("In /payUBill");	
+		logger.debug("In /payUBills");	
 		try{
-				TblUserInfo user=(TblUserInfo) session.getAttribute("user");
-				
-				TblUserInfo u=userLoginService.getUserByUserId(user.getId());
-				
-				List<UserDeviceMapping> deviceList=u.getUserDeviceMappings();				
-				   map.put("deviceList", deviceList);	
-					
-				List<TblPaymentInfo> paymentHistory=u.getTblPaymentInfos();
-					logger.debug("In /paymentHistory",paymentHistory.size());	
-				
-					map.put("paymentHistory", paymentHistory);					
-					
+				String userId=(String) session.getAttribute("userId");							
+				TblUserInfo u=userLoginService.getUserByUserId(userId);
+				List<TblPaymentInfo> paymentHistory=null;
+				List<UserDeviceMapping> deviceList=null;
+				if(u!=null) {	
+					 session.setAttribute("user", u);
+					 deviceList=u.getUserDeviceMappings();					
+					 paymentHistory=u.getTblPaymentInfos();
+					 
+				}	
+				map.put("deviceList", deviceList);					
+				map.put("paymentHistory", paymentHistory);	
 						return "payuform";
 		}catch(Exception e){	
 			e.printStackTrace();
@@ -342,8 +342,8 @@ public class PaymentGatewayController {
 	        			p.setRetryCount(retryCount);
 	        			p.setNetAmountDebit(netAmountDebit);
 	        			p.setCardnum(cardnum);
-	        			p.setCreatedOn(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
-	        			p.setUpdateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+	        			p.setCreatedOn(DateUtil.getCurrentDateTimeIST());
+	        			p.setUpdateddt(DateUtil.getCurrentDateTimeIST());
 	        			
 	        			TblPaymentInfo pay=paymentBillService.updatePaymentInfo(p);
 	        			if(pay!=null){
@@ -534,8 +534,8 @@ public class PaymentGatewayController {
 	        			p.setMode(mode);
 	        			p.setDiscount(discount);
 	        			p.setCardnum(cardnum);
-	        			p.setCreatedOn(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
-	        			p.setUpdateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+	        			p.setCreatedOn(DateUtil.getCurrentDateTimeIST());
+	        			p.setUpdateddt(DateUtil.getCurrentDateTimeIST());
 	        			
 	        			TblPaymentInfo pay=paymentBillService.updatePaymentInfo(p);
 	        			if(pay!=null){

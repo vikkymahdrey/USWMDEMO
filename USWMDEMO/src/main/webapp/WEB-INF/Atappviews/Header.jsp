@@ -186,6 +186,7 @@
           </a>
           <ul class="treeview-menu">
             <!-- <li><a href="userInfoHistory"><i class="fa fa-circle-o"></i><b>Admin User</b></a></li> -->
+            <li><a href="consoildatedFrames"><i class="fa fa-circle-o"></i> <b>Consoildated Log</b></a></li> 
             <li><a href="frameInfos"><i class="fa fa-circle-o"></i> <b>Uplink Log</b></a></li>
             <li><a href="downlinkQueue"><i class="fa fa-circle-o"></i> <b>Downlink Log</b></a></li> 
           </ul>

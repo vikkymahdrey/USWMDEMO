@@ -74,19 +74,15 @@
   
   var jsonVal;
   
-  function confirmValidate(){   
-	  
+  function confirmValidate(){ 
+	  	  
 	  	var devid=document.getElementById("devid").value;
 	  	var fromDate=document.getElementById("fromDate").value;
 	  	var toDate=document.getElementById("toDate").value;
 	  	var filter=document.getElementById("filter").value;
-	  	
+	  		
 	  		   	   
-	   if(devid=="0"){
-		   alert(devDesc);
-		   document.getElementById("devid").focus();
-		   return false;
-	   }else if ($("input[name=fromDate]").val() == "") {
+	   if ($("input[name=fromDate]").val() == "") {
 			alert("Choose FromDate");
 			document.getElementById("fromDate").focus();
 			return false;
@@ -94,12 +90,16 @@
 			alert("Choose ToDate");
 			document.getElementById("toDate").focus();
 			return false;
+	   }else if(devid=="0"){
+		   alert("Choose Water Meter");
+		   document.getElementById("devid").focus();
+		   return false;
 	   }else if ($("input[name=filter]").val() == "") {
 			alert("Choose filter");
 			document.getElementById("filter").focus();
 			return false;
 	   }else{
-		   
+		  
 		   $.ajax({
                url: 'getGraphOnDemand',
                type: 'POST',
@@ -119,7 +119,7 @@
   	     		 }
 
                   
-               }); 
+               });  
 		  
 		   return false;
 		
@@ -532,7 +532,7 @@
 										<b>Water Consumption in Litres-Hourly</b>
 									</h3>
 									
-									<form name="form1" action="#" onsubmit="return confirmValidate();" method="post">
+									<form name="form1" action="#" onsubmit="return confirmValidate();" >
 										
 								  <table class="table">
 															

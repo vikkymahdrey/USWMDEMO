@@ -89,7 +89,7 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 							if(actualPrePage.substring(actualPrePage.length()-3).equals(".do")==false)  
 								{
 									String param = actualPrePage + "___"+ request.getQueryString();
-									oPage="/USWM/?prePage="+param;									
+									oPage="/USWMDEMO/?prePage="+param;									
 									response.sendRedirect(oPage);
 																	
 									return false;

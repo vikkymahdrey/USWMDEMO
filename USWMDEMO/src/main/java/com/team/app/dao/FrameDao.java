@@ -86,6 +86,12 @@ public interface FrameDao extends JpaRepository<LoraFrame, Serializable> {
 
 	@Query(value="SELECT sum(f.waterltr) as total_waterltr FROM lora_frames f where f.applicationID=?1 and f.devEUI=?2",nativeQuery=true)
 	Long getWaterConsumptionsUnitForEndUser(@Param("appId") String appId,@Param("devEUI") String devEUI);
+
+	@Query(value="SELECT sum(f.waterltr) as total_waterltr FROM lora_frames f where f.applicationID=?1 and f.devEUI=?2 and f.id>?3",nativeQuery=true)
+	Long getWaterConsumptionsUnitForEndUserOnConsoilID(@Param("appId") String appId,@Param("devEUI") String devEUI,@Param("id") long fId);
+
+	@Query(value="SELECT sum(f.waterltr) as total_waterltr FROM lora_frames f where f.devEUI=?1 and f.created_at between ?2 and ?3",nativeQuery=true)
+	Long getWaterConsumptionsUnitFromDates(@Param("devEUI") String devEUI,@Param("fromDate") Date fromDate,@Param("toDate") Date toDate);
 	
 	
 	

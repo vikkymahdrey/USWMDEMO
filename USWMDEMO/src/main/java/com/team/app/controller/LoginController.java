@@ -46,7 +46,7 @@ public class LoginController {
 	@RequestMapping(value= {"/"})
 	public String defaultURL(HttpServletRequest request,HttpSession session,Map<String, Object> map) {
 		logger.debug("In / URL");
-		String statusLog=(String)session.getAttribute("statusLog");		
+		String statusLog=(String)request.getAttribute("statusLog");		
 		if(statusLog!=null){
 				map.put("statusLog",statusLog);
 				map.put("url",String.valueOf(session.getAttribute("url")));
@@ -60,7 +60,7 @@ public class LoginController {
 	}
 	
 	
-	@RequestMapping(value= {"/exception"}, method=RequestMethod.GET)
+	/*@RequestMapping(value= {"/exception"}, method=RequestMethod.GET)
 	public String exceptionHandler(HttpServletRequest request,HttpSession session,Map<String, Object> map){
 		logger.debug("In / Exception Handler");
 		String statusLog=(String)session.getAttribute("statusLog");		
@@ -74,6 +74,23 @@ public class LoginController {
 		}
 			
 			 return "exception";		
+	}*/
+	
+	
+	@RequestMapping(value= {"/exception"}, method=RequestMethod.GET)
+	public String exceptionHandler(HttpServletRequest request,HttpSession session,Map<String, Object> map){
+		logger.debug("In / Exception Handler");
+		String statusLog=(String)session.getAttribute("statusLog");		
+		if(statusLog!=null){
+				request.setAttribute("statusLog",statusLog);
+				request.setAttribute("url",String.valueOf(session.getAttribute("url")));
+				request.setAttribute("exception",String.valueOf(session.getAttribute("exception")));
+				request.setAttribute("className", String.valueOf(session.getAttribute("className")));
+				request.setAttribute("methodName",String.valueOf(session.getAttribute("methodName")));
+				request.setAttribute("lineNumber", String.valueOf(session.getAttribute("lineNumber")));			 	 			 	
+		}
+			return "forward:/";
+				
 	}
 	
 		
@@ -90,12 +107,23 @@ public class LoginController {
 	        TblUserInfo userInfo=null;
 	        boolean needToChangePwd=false;
 			
-	        if (username.equalsIgnoreCase("") || password.equalsIgnoreCase("")) {
+	        if (username.equals("") || password.equals("")) {
 	        	redirectAttributes.addFlashAttribute("status",
 						"<div class='failure'>Enter Username/Password!</div");
 				return new ModelAndView("redirect:/");
 			} else {			
-				userInfo=userLoginService.getUserByUserAndPwd(username,password);
+				userInfo=userLoginService.getUserByUserAndPwd(username.trim(),password);
+				if(userInfo!=null) {
+					if(!username.trim().equals(userInfo.getUname())){
+						redirectAttributes.addFlashAttribute("status","<div class='failure'>Invalid Username !</div");
+			        		return new ModelAndView("redirect:/");
+					}
+					if(!password.equals(userInfo.getPassword())){
+						redirectAttributes.addFlashAttribute("status","<div class='failure'>Invalid Password !</div");
+			        		return new ModelAndView("redirect:/");
+					}
+				}
+				
 			}
 	        
 	        if (userInfo!=null) {

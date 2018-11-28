@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.team.app.constant.AppConstants;
 import com.team.app.dao.FrameDao;
+import com.team.app.dao.LoraConsoildatedPktDao;
 import com.team.app.dao.UserInfoDao;
 import com.team.app.domain.LoraFrame;
+import com.team.app.domain.TblLoraConsoildatedPkt;
 import com.team.app.domain.TblUserInfo;
 import com.team.app.exception.AtAppException;
 import com.team.app.logger.AtLogger;
@@ -31,6 +33,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	@Autowired
 	private UserInfoDao userInfoDao;
+	
+	@Autowired
+	private  LoraConsoildatedPktDao loraConsoildatedPktDao; 
 		
 	public void setUpdateNodeName(String nodeName,String devEUI) throws Exception {
 		frameDao.setUpdateNodeName(nodeName,devEUI);
@@ -129,6 +134,16 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	public Long getWaterConsumptionsUnitForEndUser(String appId, String devEUI) throws Exception {
 		// TODO Auto-generated method stub
 		return frameDao.getWaterConsumptionsUnitForEndUser(appId,devEUI);
+	}
+
+	
+	public List<TblLoraConsoildatedPkt> getConsoildatedFrames() throws Exception {
+		return loraConsoildatedPktDao.getConsoildatedFrames();
+	}
+
+	
+	public Long getWaterConsumptionsUnitFromDates(String devNode, Date fromDate, Date toDate) throws Exception {
+		return frameDao.getWaterConsumptionsUnitFromDates(devNode, fromDate, toDate);
 	}
 
 	

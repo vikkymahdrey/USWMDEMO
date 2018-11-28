@@ -22,6 +22,7 @@ import com.team.app.domain.Landmark;
 import com.team.app.domain.LoraFrame;
 import com.team.app.domain.Role;
 import com.team.app.domain.TblKeywordType;
+import com.team.app.domain.TblSyncingChecker;
 import com.team.app.domain.TblUserInfo;
 import com.team.app.domain.UserDeviceMapping;
 import com.team.app.dto.UserDeviceDto;
@@ -30,6 +31,7 @@ import com.team.app.logger.AtLogger;
 import com.team.app.service.APLService;
 import com.team.app.service.ConsumerInstrumentService;
 import com.team.app.service.KeywordService;
+import com.team.app.service.LoraSyncingService;
 import com.team.app.service.OrganisationService;
 import com.team.app.service.UserLoginService;
 import com.team.app.utils.DateUtil;
@@ -46,6 +48,9 @@ public class UserInfoController {
 	
 	@Autowired
 	private UserLoginService userLoginService;
+	
+	@Autowired
+	private LoraSyncingService loraSyncingService;
 	
 	@Autowired
 	private APLService aplService;
@@ -469,9 +474,25 @@ public class UserInfoController {
 		logger.debug("appId....",appId);
 		logger.debug("devId....",devId);
 		try{
-		
-			mqttIntrf.doDemo(appId,devId);	
-			returnVal="Water Meter syncing has completed! Thank you";
+		TblSyncingChecker syncChecker=loraSyncingService.getLoraSyncingInfo(appId.trim(),devId.trim());
+		if(syncChecker!=null) {
+			returnVal="No need to sync it again! Already synced";
+		}else {
+			TblSyncingChecker sync=null;
+				sync=new TblSyncingChecker();
+				sync.setAppId(appId);
+				sync.setDevEUI(devId);
+				sync.setStatus(AppConstants.IND_A);
+				sync.setCreatedDt(DateUtil.getCurrentDateTimeIST());
+				sync.setUpdatedDt(DateUtil.getCurrentDateTimeIST());
+				TblSyncingChecker s=loraSyncingService.saveSyncInfo(sync);
+				if(s!=null) {
+					mqttIntrf.doDemo(appId,devId);				
+					returnVal="Water Meter syncing has completed! Thank you";
+				}
+			
+		}
+
 				
 		}catch(Exception e){
 			logger.error("Error in Ajax/syncDev",e);
@@ -679,8 +700,8 @@ public class UserInfoController {
 				udm.setDevEUI(devId);
 				udm.setDevNode(devNodeName);
 				udm.setStatus(AppConstants.IND_A);
-				udm.setCreateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
-				udm.setUpdateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+				udm.setCreateddt(DateUtil.getCurrentDateTimeIST());
+				udm.setUpdateddt(DateUtil.getCurrentDateTimeIST());
 			
 			
 				TblUserInfo newUser=null;
@@ -695,8 +716,8 @@ public class UserInfoController {
 					newUser.setContactnumber(contact);
 					newUser.setRoleBean(r);
 					newUser.setLandmark(l);
-					newUser.setCreateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
-					newUser.setUpdateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+					newUser.setCreateddt(DateUtil.getCurrentDateTimeIST());
+					newUser.setUpdateddt(DateUtil.getCurrentDateTimeIST());
 					newUser.setStatus(AppConstants.status);				
 					
 					String result=userLoginService.saveUser(newUser,udm);
@@ -773,8 +794,9 @@ public class UserInfoController {
 	
 	
 	@RequestMapping(value= {"/userUpdateInfo"}, method=RequestMethod.POST)
-    public String userUpdateInfoHandler(HttpServletRequest request, Map<String,Object> map,RedirectAttributes redirectAttributes) {
+    public @ResponseBody String userUpdateInfoHandler(HttpServletRequest request, Map<String,Object> map) {
 		logger.debug("/inside userUpdateInfo");
+		String returnVal="";
 		try{
 			String contact=request.getParameter("contact");
 			String email=request.getParameter("email");
@@ -787,26 +809,16 @@ public class UserInfoController {
 			if(user!=null){				
 				user.setContactnumber(contact);
 				user.setEmailId(email);
-				user.setUpdateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+				user.setUpdateddt(DateUtil.getCurrentDateTimeIST());
 				userLoginService.updateUserInfo(user);
-				redirectAttributes.addFlashAttribute("status",
-						"<div class=\"success\" >User details updated successfully!</div>");
-			}else{
-				redirectAttributes.addFlashAttribute("status",
-						"<div class=\"failure\" >Incorrect UserId!</div>");	
+				returnVal="success";
 			}
-			return "redirect:/personalInfo";	
+			
 		}catch(Exception e){
-			e.printStackTrace();
-			HttpSession s=request.getSession();
-		    s.setAttribute("statusLog",AppConstants.statusLog);
-			s.setAttribute("url", request.getRequestURL());
-			s.setAttribute("exception", e.toString());				
-			s.setAttribute("className",Thread.currentThread().getStackTrace()[1].getClassName());
-			s.setAttribute("methodName",Thread.currentThread().getStackTrace()[1].getMethodName());
-			s.setAttribute("lineNumber",Thread.currentThread().getStackTrace()[1].getLineNumber());		       
-		    return "redirect:/exception";
+			returnVal="failed";
 	    }
+		
+		return returnVal;
 	 }
 	
 	
@@ -991,8 +1003,8 @@ public class UserInfoController {
 					udm.setAppName(appName);
 					udm.setTblUserInfo(user);
 					udm.setStatus(AppConstants.IND_A);
-					udm.setCreateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
-					udm.setUpdateddt(DateUtil.getCurrentDateTimeIST("yyyy-MM-dd HH:mm:ss"));
+					udm.setCreateddt(DateUtil.getCurrentDateTimeIST());
+					udm.setUpdateddt(DateUtil.getCurrentDateTimeIST());
 					UserDeviceMapping udmReg=userLoginService.saveNewUDMToUser(udm);
 					if(udmReg!=null){
 						redirectAttributes.addFlashAttribute("status",

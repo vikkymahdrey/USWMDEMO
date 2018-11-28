@@ -87,12 +87,18 @@
    function confirmValidate(){
 	  
  	  var devid=document.getElementById("devid").value;
+ 	  var fromDate = new Date($('#fromDate').val());
+ 	  var toDate = new Date($('#toDate').val());
+
  	  		   	   
 	   if ($("input[name=fromDate]").val() == "") {
 			alert("Please specify FromDate");
 			return false;
 	   }else if ($("input[name=toDate]").val() == "") {
 			alert("Please specify ToDate");
+			return false;
+	   }else if (fromDate > toDate) {
+		  	 alert("Invalid Date Range"); 
 			return false;
 	   }else if(devid=="0"){
 		   alert("Please select Water Meter!");
@@ -112,6 +118,11 @@
 			  			
   			List<UserDeviceMapping> udmList=(List<UserDeviceMapping>)request.getAttribute("udmList");
   			List<LoraFrame> frames=(List<LoraFrame>)request.getAttribute("frames");
+  			
+  			Long totalConsumptions=(Long)request.getAttribute("totalConsumptions");
+  			if(totalConsumptions==null){
+  				totalConsumptions=0L;
+  			}
   			
   			%>	
 <div class="wrapper">  
@@ -172,7 +183,7 @@
 								      <td>
 								        <label>From Date</label>
 								        <div class='input-group date' id='datetimepicker1'>
-								          <input type='text' name="fromDate" class="form-control" placeholder="Select FromDate"/>
+								          <input type='text' name="fromDate" id="fromDate" class="form-control" placeholder="Select FromDate"/>
 								            <span class="input-group-addon">
 								            	<span class="glyphicon glyphicon-calendar"></span>    
 								            </span>
@@ -182,7 +193,7 @@
 							           <td>
 							       		 <label>To Date</label>
 									        <div class='input-group date' id='datetimepicker2'>
-									          <input type='text' name="toDate" class="form-control" placeholder="Select ToDate" />
+									          <input type='text' name="toDate"  id="toDate" class="form-control" placeholder="Select ToDate" />
 									            <span class="input-group-addon">
 									            	<span class="glyphicon glyphicon-calendar"></span>
 									            </span>
@@ -222,6 +233,43 @@
 							</div>	
 											 
 					   </div>
+					   
+					    <!-- Icon displaying Total Water Units Consumed based on From and To Date -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="box box-solid">
+								<div class="box-header">
+									<i class="fa fa-tint"></i>
+									<h3 class="box-title">
+										<b>Total Water Consumptions</b>
+									</h3>
+
+									<div class="box-tools pull-right">
+										<button type="button" class="btn btn-default btn-sm"
+											data-widget="collapse">
+											<i class="fa fa-minus"></i>
+										</button>
+										<!-- <button type="button" class="btn btn-default btn-sm">
+											<i class="fa fa-refresh"></i>
+										</button> -->
+									</div>
+								</div>
+
+								<div class="box-body">
+
+									<div class="info-box col-sm-6 mar-top-25">
+										<span class="info-box-icon bg-blue"><i
+											class="fa fa-tint"></i></span>
+										<div class="info-box-content">
+											<span class="info-box-text">Total Water Meter Consumptions</span>
+											<span class="info-box-number"><b><%=totalConsumptions%></b></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>   <!-- Icon ends here -->
+					   
 					   
 					    	<% if(frames!=null && !frames.isEmpty()){
     				    	%>

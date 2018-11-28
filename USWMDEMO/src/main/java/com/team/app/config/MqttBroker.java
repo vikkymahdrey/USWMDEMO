@@ -403,46 +403,148 @@ public class MqttBroker implements MqttCallback,MqttIntrf {
 							     		 					n++;							     		 					
 									     		 		    
 							     		 				}else if(packetType.equals("7")) {
-							     		 					logger.debug("printing i>2,consoildated");
+							     		 					logger.debug("printing i>2,consoildated");							     		 											     		 					
 							     		 					consoildatedUnits=consoildatedUnits+Integer.parseInt(decodeBinary,16);
 							     		 					if(i<5) {
 							     		 						i++;
 							     		 						continue;
 							     		 					}
 							     		 					
+							     		 					TblLoraConsoildatedPkt existingConsPkt=loraConsoildatedPktDao.validateLoraConsoildatedPkt(frame.getApplicationID(),frame.getDevEUI(),devMapId);
+								     		 				if(existingConsPkt==null) {	
+							     		 					logger.debug("actual consoildated i ",i);
 							     		 					TblLoraConsoildatedPkt pkt=null;
 							     		 						pkt=new TblLoraConsoildatedPkt();
 							     		 						
 							     		 						pkt.setCreatedDt(formatter.parse(formatter.format(new Date(millseconds))));
 							     		 						pkt.setUpdatedDt(formatter.parse(formatter.format(new Date(millseconds))));						     		 					
-							     		 						pkt.setWaterltr(String.valueOf(consoildatedUnits));
+							     		 						pkt.setWaterltr(String.valueOf(consoildatedUnits*10));
 							     		 						pkt.setApplicationId(frame.getApplicationID());									     		 		 
 							     		 						pkt.setNodeName(frame.getNodeName());
+							     		 						pkt.setDevMapId(devMapId);
 							     		 						pkt.setDevEUI(frame.getDevEUI());
 							     		 						pkt.setStatus(AppConstants.IND_A);
 							     		 						
 							     		 						TblLoraConsoildatedPkt consPkt=loraConsoildatedPktDao.save(pkt);
 							     		 						if(consPkt!=null) {
-							     		 							Long l=frameDao.getWaterConsumptionsUnitForEndUser(consPkt.getApplicationId(),consPkt.getDevEUI());
-							     		 							if(l!=null) {
-							     		 									logger.debug("IN Long ,",l);
-							     		 									logger.debug("IN Long1 ,",Long.parseLong(consPkt.getWaterltr()));
-							     		 								if(l!=Long.parseLong(consPkt.getWaterltr()) && Long.parseLong(consPkt.getWaterltr())>=l) {
-							     		 									logger.debug("IN if condition");
-							     		 									LoraFrame fm=frameDao.getLoraFrameByDevEUIAndAppID(consPkt.getDevEUI(),consPkt.getApplicationId());
-							     		 									if(fm!=null) {
-							     		 										logger.debug("IN if condition fm");
-							     		 										fm.setWaterltr(String.valueOf(Long.parseLong(consPkt.getWaterltr())*10-l));
-							     		 										fm.setUpdatedAt(formatter.parse(formatter.format(new Date(millseconds))));
-							     		 										frameDao.save(fm);
-							     		 										
-							     		 										consPkt.setStatus(AppConstants.IND_D);
+							     		 							logger.debug("IN if TblLoraConsoildatedPkt");
+							     		 							TblLoraConsoildatedPkt lastConsPkt=loraConsoildatedPktDao.getLastClosedConsoildatedPkt(consPkt.getApplicationId(),consPkt.getDevEUI());
+							     		 							if(lastConsPkt!=null) {
+							     		 								logger.debug("IN if lastConsPkt");
+								     		 							Long l=frameDao.getWaterConsumptionsUnitForEndUserOnConsoilID(consPkt.getApplicationId(),consPkt.getDevEUI(),Long.parseLong(lastConsPkt.getfId()));
+								     		 							logger.debug("sum  lastConsPkt",l);
+								     		 							if(l!=null) {
+								     		 									logger.debug("IN Long ,",l);
+								     		 									logger.debug("IN Long1 ,",Long.parseLong(consPkt.getWaterltr()));
+								     		 									
+								     		 								if(l!=Long.parseLong(consPkt.getWaterltr()) && Long.parseLong(consPkt.getWaterltr())>l) {
+								     		 									logger.debug("IN if condition");
+								     		 									LoraFrame fm=frameDao.getLoraFrameByDevEUIAndAppID(consPkt.getDevEUI(),consPkt.getApplicationId());
+								     		 									if(fm!=null) {
+								     		 										logger.debug("IN if condition fm");
+								     		 										fm.setWaterltr(String.valueOf(Long.parseLong(fm.getWaterltr())+Long.parseLong(consPkt.getWaterltr())-l));
+								     		 										fm.setUpdatedAt(formatter.parse(formatter.format(new Date(millseconds))));
+								     		 										LoraFrame fCon=frameDao.save(fm);
+								     		 										if(fCon!=null) {
+								     		 											consPkt.setStatus(AppConstants.IND_D);
+									     		 										consPkt.setfId(fCon.getId());
+									     		 										loraConsoildatedPktDao.save(consPkt);
+								     		 										}		
+								     		 									}
+								     		 								}else if(l>=Long.parseLong(consPkt.getWaterltr())) {								     		 									
+								     		 									logger.debug("IN if else condition");
+								     		 									LoraFrame fm=frameDao.getLoraFrameByDevEUIAndAppID(consPkt.getDevEUI(),consPkt.getApplicationId());
+								     		 									if(fm!=null) {
+								     		 										logger.debug("IN if else if condition fm");								     		 										
+								     		 											consPkt.setStatus(AppConstants.IND_D);
+									     		 										consPkt.setfId(fm.getId());
+									     		 										loraConsoildatedPktDao.save(consPkt);			     		 												     		 										
+								     		 										
+								     		 									}
+								     		 									
+								     		 								}
+								     		 							}else {
+								     		 								//NO Packet found for consoildated
+								     		 								
+								     		 								frm.setCreatedAt(formatter.parse(formatter.format(new Date(millseconds))));
+													     		 		 	frm.setUpdatedAt(formatter.parse(formatter.format(new Date(millseconds))));						     		 					
+													     		 		 	frm.setDevMapId(devMapId);
+													     		 		 	frm.setWaterltr(String.valueOf(Integer.parseInt(consPkt.getWaterltr())));
+													     		 		 	frm.setApplicationID(frame.getApplicationID());
+													     		 		 	frm.setApplicationName(frame.getApplicationName());
+													     		 		 	frm.setNodeName(frame.getNodeName());
+													     		 		 	frm.setDevEUI(frame.getDevEUI());
+													     		 		 	frm.setGatewayMac(frame.getGatewayMac());
+													     		 		 	frm.setGatewayName(frame.getGatewayName());
+													     		 		 	frm.setfPort(frame.getfPort());									     		 		 	
+													     		 		 	
+													     		 		 	LoraFrame fCon=frameDao.save(frm);
+													     		 		    if(fCon!=null) {
+													     		 		    	consPkt.setStatus(AppConstants.IND_D);
+							     		 										consPkt.setfId(fCon.getId());
 							     		 										loraConsoildatedPktDao.save(consPkt);
-							     		 									}
-							     		 								}
+													     		 		    }
+								     		 							}
+							     		 							
+							     		 							}else{
+							     		 								logger.debug("IN else lastConsPkt");
+							     		 								Long l=frameDao.getWaterConsumptionsUnitForEndUser(consPkt.getApplicationId(),consPkt.getDevEUI());
+								     		 							if(l!=null) {
+								     		 									logger.debug("IN Long ,",l);
+								     		 									logger.debug("IN Long1 ,",Long.parseLong(consPkt.getWaterltr()));
+								     		 								if(l!=Long.parseLong(consPkt.getWaterltr()) && Long.parseLong(consPkt.getWaterltr())>l) {
+								     		 									logger.debug("IN if condition");
+								     		 									LoraFrame fm=frameDao.getLoraFrameByDevEUIAndAppID(consPkt.getDevEUI(),consPkt.getApplicationId());
+								     		 									if(fm!=null) {
+								     		 										logger.debug("IN if condition fm");
+								     		 										fm.setWaterltr(String.valueOf(Long.parseLong(fm.getWaterltr())+Long.parseLong(consPkt.getWaterltr())-l));
+								     		 										fm.setUpdatedAt(formatter.parse(formatter.format(new Date(millseconds))));
+								     		 										LoraFrame fCon=frameDao.save(fm);
+								     		 										if(fCon!=null) {
+								     		 											consPkt.setStatus(AppConstants.IND_D);
+									     		 										consPkt.setfId(fCon.getId());
+									     		 										loraConsoildatedPktDao.save(consPkt);
+								     		 										}			     		 										
+								     		 										
+								     		 									}
+								     		 								}else if(l==Long.parseLong(consPkt.getWaterltr())) {								     		 									
+								     		 									logger.debug("IN if else condition");
+								     		 									LoraFrame fm=frameDao.getLoraFrameByDevEUIAndAppID(consPkt.getDevEUI(),consPkt.getApplicationId());
+								     		 									if(fm!=null) {
+								     		 										logger.debug("IN if else if condition fm");								     		 										
+								     		 											consPkt.setStatus(AppConstants.IND_D);
+									     		 										consPkt.setfId(fm.getId());
+									     		 										loraConsoildatedPktDao.save(consPkt);			     		 												     		 										
+								     		 										
+								     		 									}
+								     		 									
+								     		 								}
+								     		 							}else {
+								     		 								//NO Packet found for consoildated
+								     		 								
+								     		 								frm.setCreatedAt(formatter.parse(formatter.format(new Date(millseconds))));
+													     		 		 	frm.setUpdatedAt(formatter.parse(formatter.format(new Date(millseconds))));						     		 					
+													     		 		 	frm.setDevMapId(devMapId);
+													     		 		 	frm.setWaterltr(String.valueOf(Integer.parseInt(consPkt.getWaterltr())));
+													     		 		 	frm.setApplicationID(frame.getApplicationID());
+													     		 		 	frm.setApplicationName(frame.getApplicationName());
+													     		 		 	frm.setNodeName(frame.getNodeName());
+													     		 		 	frm.setDevEUI(frame.getDevEUI());
+													     		 		 	frm.setGatewayMac(frame.getGatewayMac());
+													     		 		 	frm.setGatewayName(frame.getGatewayName());
+													     		 		 	frm.setfPort(frame.getfPort());									     		 		 	
+													     		 		 	
+													     		 		 	LoraFrame fCon=frameDao.save(frm);
+													     		 		    if(fCon!=null) {
+													     		 		    	consPkt.setStatus(AppConstants.IND_D);
+							     		 										consPkt.setfId(fCon.getId());
+							     		 										loraConsoildatedPktDao.save(consPkt);
+													     		 		    }
+													     		 		    
+								     		 							}
 							     		 							}
 							     		 						}
-							     		 						
+							     		 				 	}	
 									     		 		 		
 									     		 		    n++;
 							     		 				}

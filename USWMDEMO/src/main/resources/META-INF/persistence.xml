@@ -29,6 +29,7 @@
 		<class>com.team.app.domain.ActionsAudit</class>
 		<class>com.team.app.domain.DatabaseAudit</class>
 		<class>com.team.app.domain.TblLoraConsoildatedPkt</class>
+		<class>com.team.app.domain.TblSyncingChecker</class>
 		
 
 		<properties>
