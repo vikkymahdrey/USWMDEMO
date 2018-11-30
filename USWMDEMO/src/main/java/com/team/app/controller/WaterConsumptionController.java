@@ -2,6 +2,7 @@ package com.team.app.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +79,41 @@ public class WaterConsumptionController {
 		
 		 
 	 }
+	
+	
+	@RequestMapping("totalWaterConsumedByUser")
+	@ResponseBody
+	public Map<String,Object> getwaterconsumptionBUser(HttpServletRequest request,HttpSession session)
+	{
+		
+		String userId=(String) session.getAttribute("userId");
+		logger.debug("UserId as: ",userId);
+		Map<String,Object> frms=null;
+		try{
+			
+				frms=new HashMap<String,Object>();
+			TblUserInfo user=userLoginService.getUserByUId(userId);
+			if(user!=null){
+				List<UserDeviceMapping> udmList=user.getUserDeviceMappings();
+				
+				if(udmList!=null && !udmList.isEmpty()) {
+					for(UserDeviceMapping udm : udmList) {
+						Long units=consumerInstrumentServiceImpl.getWaterConsumptionsUnitForEndUser(udm.getAppId(),udm.getDevEUI());
+						if(units!=null) {
+							frms.put(udm.getDevNode()+"->"+udm.getDevEUI(), units);
+						}else {
+							frms.put(udm.getDevNode()+"->"+udm.getDevEUI(), 0);
+						}
+						
+						
+					}
+				}
+			}
+			
+		}catch(Exception e){}
+		return frms;
+
+	}
 	
 	
 	@RequestMapping(value= {"/endUserWaterConsumption"}, method={ RequestMethod.GET, RequestMethod.POST })

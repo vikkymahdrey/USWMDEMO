@@ -147,6 +147,23 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
+	public Long getWaterConsumptionsForCurrDate(String appId, String devEUI, Date currDate) throws Exception {
+		return frameDao.getWaterConsumptionsForCurrDate(appId,devEUI,currDate);
+	}
+
+
+	public Long getFrameByDevEUIandAppIdandDates(Date sDt, Date eDt, String appId, String devEUI) throws Exception {
+		return frameDao.getFrameByDevEUIandAppIdandDates(sDt, eDt, appId, devEUI);
+	}
+
+	
+	public Object[] getTotalMontlyIntervalWaterConsumptions(Date sDt, Date eDt, String appId, String devEUI,
+			String interval) throws Exception {
+		
+		return frameDao.getTotalMontlyIntervalWaterConsumptions(sDt, eDt, appId, devEUI,interval);
+	}
+
+	
 	
 
 	

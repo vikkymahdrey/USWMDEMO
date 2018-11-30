@@ -225,7 +225,7 @@
       <ul class="sidebar-menu">
         <li class="header"><b>MAIN NAVIGATION</b></li>
         <li class="active treeview">
-          <a href="userHome">
+          <a href="userDashBoard">
             <i class="fa fa-dashboard"></i> <span><b>Dashboard</b></span>
           </a>
         </li>

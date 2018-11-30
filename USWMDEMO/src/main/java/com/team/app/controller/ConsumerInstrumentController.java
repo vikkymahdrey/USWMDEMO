@@ -395,8 +395,7 @@ public class ConsumerInstrumentController {
 								Date eDt=DateUtil.convertLongToDateNoZone(endDt+19800000, "yyyy-MM-dd");
 								logger.debug("Date sDt",DateUtil.changeDateFromatIST(sDt));
 								logger.debug("Date eDt",eDt);
-								logger.debug("DevEUI :",devEUI);
-								logger.debug("AppId :",appId);
+								
 							
 								
 								Object[] ob=consumerInstrumentServiceImpl.getLoraFrameByDevEUIandAppIdandDates(sDt,eDt,appId.trim(),devEUI.trim(),String.valueOf(obj.get("interval")));
@@ -438,6 +437,321 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getTotalMontlyIntervalWaterConsumptions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getTotalMontlyIntervalWaterConsumptions(@RequestBody String received,HttpServletRequest request){
+		logger.info(" /POST /getTotalMontlyIntervalWaterConsumptions API ", received);
+		ResponseEntity<String> responseEntity = null;
+		JSONObject obj=null;		
+		try{		
+			obj=new JSONObject();
+			obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			return new ResponseEntity<String>("Exception in /getTotalMontlyIntervalWaterConsumptions", HttpStatus.EXPECTATION_FAILED);
+		}
+		try {
+			
+			if(String.valueOf(obj.get("userId"))!=null && String.valueOf(obj.get("startDate"))!=null && String.valueOf(obj.get("endDate"))!=null  && String.valueOf(obj.get("interval"))!=null){
+				//int n=0;
+				long startDt=0;
+				long endDt=0;
+				try{
+					//n=Integer.parseInt(String.valueOf(obj.get("interval")));
+					startDt=Long.parseLong(String.valueOf(obj.get("startDate")));
+					endDt=Long.parseLong(String.valueOf(obj.get("endDate")));		
+				}catch(Exception e){
+					;
+				}
+				
+				logger.debug("Print startDt ", startDt);
+				logger.debug("Print endDt ", endDt);
+				
+				
+				TblUserInfo userInfo=userLoginService.getUserByUserId(String.valueOf(obj.get("userId")).trim());
+				if(userInfo!=null){
+					List<UserDeviceMapping> udmList=userInfo.getUserDeviceMappings();
+					if(udmList!=null && !udmList.isEmpty()){
+						JSONArray jsonArr=null;
+							jsonArr=new JSONArray();						
+					    JSONObject res=null;
+					    	res=new JSONObject();
+						
+						for(UserDeviceMapping udm : udmList){
+								Date sDt=DateUtil.convertLongToDateNoZone(startDt, "yyyy-MM-dd");
+								Date eDt=DateUtil.convertLongToDateNoZone(endDt, "yyyy-MM-dd");
+								logger.debug("Date sDt",sDt);
+								logger.debug("Date eDt",eDt);
+														
+								
+								Object[] ob=consumerInstrumentServiceImpl.getTotalMontlyIntervalWaterConsumptions(sDt,eDt,udm.getAppId(),udm.getDevEUI(),String.valueOf(obj.get("interval")));
+								//Object[] ob=consumerInstrumentServiceImpl.getLoraFrameByUserIdAndDates(sDt,eDt,userInfo.getId(),String.valueOf(obj.get("interval")));
+								logger.debug("Resultant",String.valueOf(ob[0]));		
+																
+									
+									JSONArray jArr=null;
+										jArr=new JSONArray();							
+													
+								if(String.valueOf(ob[0])!=null && !String.valueOf(ob[0]).isEmpty()){
+									String[] result=String.valueOf(ob[0]).split(",");
+									logger.debug("result length",result.length);
+										for(int i=0;i<result.length;i++){
+											String[] jsonVal=result[i].split(":");
+											JSONObject js=null;
+								    			js=new JSONObject();
+								    			js.put("date", jsonVal[0]);
+								    			js.put("units", jsonVal[1]);
+								    			jArr.add(js);
+										}
+								}
+								
+								
+								JSONObject json=null;
+									json=new JSONObject();	
+								json.put("devNode", udm.getDevNode());
+								json.put("devEUI", udm.getDevEUI());
+								json.put("monthlyConsumptions", jArr);
+								jsonArr.add(json);
+								
+								
+					}		
+						   
+							res.put("resultant", jsonArr);
+							String response=JsonUtil.objToJson(res);
+							responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+							
+					   }else{
+						   	responseEntity = new ResponseEntity<String>("User not associated with device", HttpStatus.NOT_ACCEPTABLE);
+					   }
+					}else{
+							responseEntity = new ResponseEntity<String>("userId not exist", HttpStatus.METHOD_NOT_ALLOWED);
+					}
+			
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty requested body", HttpStatus.BAD_REQUEST);
+			}
+			
+		}catch(Exception e) {
+			logger.error("Exception in /getTotalMontlyIntervalWaterConsumptions",e);
+			responseEntity = new ResponseEntity<String>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return responseEntity;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getTotalMonthWaterConsumptions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getMonthlyWaterConsumptions(@RequestBody String received,HttpServletRequest request) {
+		logger.info(" /POST /getTotalMonthWaterConsumptions API ", received);
+		ResponseEntity<String> responseEntity = null;
+		JSONObject obj=null;		
+		try{		
+			obj=new JSONObject();
+			obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			return new ResponseEntity<String>("Exception in /getTotalMonthWaterConsumptions", HttpStatus.EXPECTATION_FAILED);
+		}
+		try {
+			
+			if(String.valueOf(obj.get("userId"))!=null && String.valueOf(obj.get("startDate"))!=null && String.valueOf(obj.get("endDate"))!=null ){
+				
+				long startDt=0;
+				long endDt=0;
+				try{
+					
+					startDt=Long.parseLong(String.valueOf(obj.get("startDate")));
+					endDt=Long.parseLong(String.valueOf(obj.get("endDate")));		
+				}catch(Exception e){
+					;
+				}
+				
+				logger.debug("Print startDt ", startDt);
+				logger.debug("Print endDt ", endDt);
+				
+				
+				TblUserInfo userInfo=userLoginService.getUserByUserId(String.valueOf(obj.get("userId")).trim());
+				if(userInfo!=null){
+					List<UserDeviceMapping> udmList=userInfo.getUserDeviceMappings();
+					if(udmList!=null && !udmList.isEmpty()){
+						JSONArray jsonArr=null;
+							jsonArr=new JSONArray();						
+					    JSONObject res=null;
+					    	res=new JSONObject();				    
+																	
+						for(UserDeviceMapping udm : udmList){							
+						 
+								Date sDt=DateUtil.convertLongToDateNoZone(startDt, "yyyy-MM-dd HH:mm:ss");
+								Date eDt=DateUtil.convertLongToDateNoZone(endDt, "yyyy-MM-dd HH:mm:ss");
+								logger.debug("Actual sDt",sDt);
+								logger.debug("Actual eDt",eDt);
+																					
+								Long l=consumerInstrumentServiceImpl.getFrameByDevEUIandAppIdandDates(sDt,eDt,udm.getAppId(),udm.getDevEUI());
+								JSONObject json=null;	
+									json=new JSONObject();
+										json.put("devNode", udm.getDevNode());
+										json.put("devEUI", udm.getDevEUI());
+									if(l!=null) {
+										json.put("totalConsumptions", l);
+									}else {
+										json.put("totalConsumptions", 0);
+									}
+									
+									jsonArr.add(json);
+										
+								
+						   }	 
+							res.put("resultant", jsonArr);
+							String response=JsonUtil.objToJson(res);
+							responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+							
+					   }else{
+						   	responseEntity = new ResponseEntity<String>("User not associated with device", HttpStatus.NOT_ACCEPTABLE);
+					   }
+					}else{
+							responseEntity = new ResponseEntity<String>("userId not exist", HttpStatus.METHOD_NOT_ALLOWED);
+					}
+			
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty requested body", HttpStatus.BAD_REQUEST);
+			}
+			
+		}catch(Exception e) {
+			logger.error("Exception in /getTotalMonthWaterConsumptions",e);
+			responseEntity = new ResponseEntity<String>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return responseEntity;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getTotalWaterConsumptions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getTotalWaterConsumptionsHandler(@RequestBody String received,HttpServletRequest request) {
+		logger.info(" /POST /getTotalWaterConsumptions API ", received);
+		ResponseEntity<String> responseEntity = null;
+		JSONObject obj=null;		
+		try{		
+			obj=new JSONObject();
+			obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			return new ResponseEntity<String>("Exception in /getTotalWaterConsumptions", HttpStatus.EXPECTATION_FAILED);
+		}
+		try {
+			
+			if(String.valueOf(obj.get("userId"))!=null){
+					
+				TblUserInfo userInfo=userLoginService.getUserByUserId(String.valueOf(obj.get("userId")).trim());
+				if(userInfo!=null){
+					List<UserDeviceMapping> udmList=userInfo.getUserDeviceMappings();
+					if(udmList!=null && !udmList.isEmpty()){
+						
+						JSONArray jsonArr=null;
+							jsonArr=new JSONArray();						
+						JSONObject result=null;	
+							result=new JSONObject();				    						
+												
+						for(UserDeviceMapping udm : udmList){
+							Long l=consumerInstrumentServiceImpl.getWaterConsumptionsUnitForEndUser(udm.getAppId(), udm.getDevEUI());
+							 JSONObject res=null;	
+							 	res=new JSONObject();
+								res.put("devNode", udm.getDevNode());
+								res.put("devEUI", udm.getDevEUI());
+									if(l!=null) {
+										res.put("totalConsumptions", l);
+									}else {
+										res.put("totalConsumptions", 0);
+									}
+								jsonArr.add(res);								
+						}				
+								
+							result.put("resultant", jsonArr);
+							String response=JsonUtil.objToJson(result);
+							responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+							
+					   }else{
+						   	responseEntity = new ResponseEntity<String>("User not associated with device", HttpStatus.NOT_ACCEPTABLE);
+					   }
+					}else{
+							responseEntity = new ResponseEntity<String>("userId not exist", HttpStatus.METHOD_NOT_ALLOWED);
+					}
+			
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty requested body", HttpStatus.BAD_REQUEST);
+			}
+			
+		}catch(Exception e) {
+			logger.error("Exception in /getTotalWaterConsumptions",e);
+			responseEntity = new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return responseEntity;
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getCurrTotalWaterConsumptions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getCurrWaterConsumptionsHandler(@RequestBody String received,HttpServletRequest request) {
+		logger.info(" /POST /getCurrTotalWaterConsumptions API ", received);
+		ResponseEntity<String> responseEntity = null;
+		JSONObject obj=null;		
+		try{		
+			obj=new JSONObject();
+			obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			return new ResponseEntity<String>("Exception in /getCurrTotalWaterConsumptions", HttpStatus.EXPECTATION_FAILED);
+		}
+		try {
+			
+			if(String.valueOf(obj.get("userId"))!=null){
+					
+				TblUserInfo userInfo=userLoginService.getUserByUserId(String.valueOf(obj.get("userId")).trim());
+				if(userInfo!=null){
+					List<UserDeviceMapping> udmList=userInfo.getUserDeviceMappings();
+					if(udmList!=null && !udmList.isEmpty()){
+						
+						SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+				         Date currDate=DATE_FORMAT.parse(DATE_FORMAT.format(new Date()));
+						
+						JSONArray jsonArr=null;
+							jsonArr=new JSONArray();						
+						JSONObject result=null;	
+							result=new JSONObject();				    						
+												
+						for(UserDeviceMapping udm : udmList){
+							Long l=consumerInstrumentServiceImpl.getWaterConsumptionsForCurrDate(udm.getAppId(), udm.getDevEUI(),currDate);
+							 JSONObject res=null;	
+							 	res=new JSONObject();
+								res.put("devNode", udm.getDevNode());
+								res.put("devEUI", udm.getDevEUI());
+									if(l!=null) {
+										res.put("totalConsumptions", l);
+									}else {
+										res.put("totalConsumptions", 0);
+									}
+								jsonArr.add(res);								
+						}				
+								
+							result.put("resultant", jsonArr);
+							String response=JsonUtil.objToJson(result);
+							responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+							
+					   }else{
+						   	responseEntity = new ResponseEntity<String>("User not associated with device", HttpStatus.NOT_ACCEPTABLE);
+					   }
+					}else{
+							responseEntity = new ResponseEntity<String>("userId not exist", HttpStatus.METHOD_NOT_ALLOWED);
+					}
+			
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty requested body", HttpStatus.BAD_REQUEST);
+			}
+			
+		}catch(Exception e) {
+			logger.error("Exception in /getCurrTotalWaterConsumptions",e);
+			responseEntity = new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return responseEntity;
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getGraphUnits", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

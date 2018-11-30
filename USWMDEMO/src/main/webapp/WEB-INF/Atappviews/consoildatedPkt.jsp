@@ -91,7 +91,8 @@
 							<display:column  property="devEUI" title="WaterMeter" sortable="true"  />
 							<display:column  property="status" title="Status" sortable="true"  />
 							<display:column  property="waterltr" title="Water_liters"  sortable="true"  />
-							<display:column  property="fId" title="frame_ref" sortable="true"  />							
+							<display:column  property="fId" title="frame_ref" sortable="true"  />		
+							<display:column  property="devMapId" title="devMapId" sortable="true"  />						
 							<display:column  property="createdDt" title="createdDt"  sortable="true" format="{0,date,yyyy-MM-dd HH:mm:ss}" /> 
                             <%-- <display:column   title="CreatedDt" >
 								 <fmt:timeZone value="${timeZone}">	    								

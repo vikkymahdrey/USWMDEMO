@@ -34,6 +34,10 @@ public interface ConsumerInstrumentService {
 	public Long getWaterConsumptionsUnitForEndUser(String appId, String devEUI)throws Exception;
 	public List<TblLoraConsoildatedPkt> getConsoildatedFrames()throws Exception;
 	public Long getWaterConsumptionsUnitFromDates(String devNode, Date fromDate, Date toDate)throws Exception;
+	public Long getWaterConsumptionsForCurrDate(String appId, String devEUI, Date currDate)throws Exception;
+	public Long getFrameByDevEUIandAppIdandDates(Date sDt, Date eDt, String appId, String devEUI)throws Exception;
+	public Object[] getTotalMontlyIntervalWaterConsumptions(Date sDt, Date eDt, String appId, String devEUI,
+			String interval)throws Exception;
 	
 	
 	

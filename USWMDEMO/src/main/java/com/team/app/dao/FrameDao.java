@@ -92,6 +92,15 @@ public interface FrameDao extends JpaRepository<LoraFrame, Serializable> {
 
 	@Query(value="SELECT sum(f.waterltr) as total_waterltr FROM lora_frames f where f.devEUI=?1 and f.created_at between ?2 and ?3",nativeQuery=true)
 	Long getWaterConsumptionsUnitFromDates(@Param("devEUI") String devEUI,@Param("fromDate") Date fromDate,@Param("toDate") Date toDate);
+ 
+	@Query(value="SELECT sum(f.waterltr) as total_waterltr FROM lora_frames f where f.applicationID=?1 and f.devEUI=?2 and f.created_at like '%?3%'",nativeQuery=true)
+	Long getWaterConsumptionsForCurrDate(@Param("appId") String appId,@Param("devEUI") String devEUI,@Param("currDate") Date currDate);
+
+	@Query(value="SELECT sum(f.waterltr) as total_waterltr FROM lora_frames f where f.created_at between ?1 and ?2 and f.applicationID=?3 and f.devEUI=?4",nativeQuery=true)
+	Long getFrameByDevEUIandAppIdandDates(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,@Param("appId") String appId,@Param("devEUI") String devEUI);
+
+	@Query(value = "CALL frames_monthly_interval(?1,?2,?3,?4,?5)", nativeQuery = true)
+	Object[] getTotalMontlyIntervalWaterConsumptions(@Param("startDt") Date startDt, @Param("endDt") Date endDt, @Param("appId") String appId, @Param("devEUI") String devEUI,@Param("interval") String interval);
 	
 	
 	
